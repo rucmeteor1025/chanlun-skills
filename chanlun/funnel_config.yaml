@@ -1,0 +1,72 @@
+# 30min 三层漏斗选股策略配置
+# 策略：指数一买 → 板块二买 → 板块内个股三买（严格缠论定义）
+
+# 第一层：指数池（方向确认）
+index_codes:
+  - "000300.SH"   # 沪深300
+  - "000905.SH"   # 中证500
+  - "000852.SH"   # 中证1000
+  - "399006.SZ"   # 创业板指
+
+# v5t 引擎参数（30min 级别，动态过滤关闭保证可复现）
+engine:
+  min_amplitude: 0.003        # 笔最小幅度 0.3%
+  pivot_min_amplitude: 0.008  # 中枢最小振幅 0.8%
+  pivot_min_strokes: 3
+  pivot_max_strokes: 12
+  pivot_init_filter_ratio: 2.0
+  pivot_extend_filter_ratio: 1.5
+  pivot_final_filter_ratio: 2.0
+
+# MACD 参数（对齐 chan.py / 同花顺惯例）
+macd:
+  fast: 12
+  slow: 26
+  signal: 9
+
+# 一买参数（第一层 & 第二层板块一买复用）
+buy1:
+  min_pivots: 2              # 至少2个同向向下中枢（严格趋势背驰，不用盘整背驰冒充）
+  divergence_rate: 0.9       # MACD面积衰减阈值：c段 < b段 × 0.9
+  use_peak_fallback: true    # 面积不满足时允许DIF峰值衰减兜底
+  macd_below_zero: true      # DIF/DEA 须在0轴之下（一买的MACD定律）
+  lookback_bars: 800         # 回看K线数（30min，约100个交易日）
+  anchor_recency_days: 30    # 指数一买超过N天则漏斗不启动
+
+# 二买参数（第二层）
+buy2:
+  window_days: 5             # 指数一买前后 ±N 个交易日内的板块一买
+  max_retrace_ratio: 0.618   # 回调不超过反弹幅度的61.8%
+  require_first_pullback: true  # 只要一买后第一次回调
+
+# 三买参数（第三层）
+buy3:
+  min_strokes_in_zs: 3       # 中枢内至少3笔
+  first_pullback_only: true  # 只看离开后的第一次回试
+  macd_confirm: true         # 回试笔MACD面积 < 离开笔MACD面积
+  min_zs_amplitude: 0.01     # 中枢最小振幅1%（过滤噪声中枢）
+  lookback_bars: 400         # 个股回看K线数
+  recency_days: 10           # 三买信号新鲜度（天）
+
+# 板块层
+sector:
+  source: "sw"               # sw=申万一级31行业（tushare历史时点成分）/ sina=新浪行业49板块（仅当前快照）
+  whitelist: []              # 非空时只扫这些板块代码（sw用801xxx.SI，sina用new_xxx），调试用
+  blacklist: []              # 排除的板块代码
+  min_members_with_data: 3   # 合成指数至少需N只有数据的成分股
+
+# 交易参数（回测用）
+trade:
+  hold_days_max: 10          # 最大持仓天数
+  bars_per_day: 8            # 30min 每日K线数
+  stop_loss_below_zg: 0.005  # 止损：ZG下方0.5%
+  position_per_stock: 0.1    # 单票仓位10%
+  max_positions: 5
+  commission: 0.00025        # 佣金万2.5（双边）
+  stamp_tax: 0.001           # 印花税千1（卖出）
+
+# 数据
+data:
+  source: "sina"
+  freq: "30min"
+  sleep_sec: 0.35            # 批量拉取间隔
