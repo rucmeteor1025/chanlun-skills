@@ -52,6 +52,11 @@ chanlun/
 skills/
   a-share-technical-analysis/  # Hermes skill: EMA/SMA systems, Chan entry, backtest index
   trend-structure-tracker/     # Hermes skill: trend structure + Chan-enhanced framework
+tests/
+  test_chan_core.py            # deterministic engine tests (synthetic OHLC, no market data)
+docs/
+  screenshot_chanlun_daily.png # real pipeline output on 688256.SH
+.github/workflows/ci.yml       # pytest CI on Python 3.11 / 3.12
 ```
 
 ## Quick Start
@@ -72,8 +77,23 @@ python3 walkforward_backtest_v5t.py --help
 
 ## Example Output
 
+Real output on 688256.SH (Cambricon, daily, 260 bars) — the six-stage pipeline at work: raw K-lines → merged K-lines → fractals → strokes → pivots (center) → labeled buy/sell points:
+
+![Chan analysis pipeline on 688256.SH](docs/screenshot_chanlun_daily.png)
+
 - `chanlun/缠论分析_v5.py 688256.SH --count 260` → interactive Plotly HTML report: merged K-lines, fractal/stroke/pivot overlays, trend segments, and labeled buy/sell points, saved to `输出/`.
 - Strategy funnel scans emit ranked candidate lists with staged signal types and config-driven thresholds (`funnel_config.yaml`).
+
+## Testing & CI
+
+The engine ships with a deterministic test suite (`tests/`) that runs on synthetic OHLC data — no market data or credentials required:
+
+```bash
+pip install pandas numpy pytest
+pytest -v
+```
+
+Coverage includes Chan-theory structural invariants: inclusion-free merged K-lines, alternating fractals, alternating stroke directions, minimum-amplitude enforcement, valid pivot (ZG>ZD) geometry, canonical buy/sell labels, and full-pipeline integrity. CI runs the suite on Python 3.11 and 3.12 (see `.github/workflows/ci.yml`).
 
 ## Using with Hermes (LLM agent)
 
