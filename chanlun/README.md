@@ -36,13 +36,13 @@
 
 ```bash
 # 寒武纪完整缠论图
-python3 '~/AI_invest/投研系统/工具脚本/技术/缠论/缠论分析_v5.py' 688256.SH --count 260
+python3 './缠论分析_v5.py' 688256.SH --count 260
 
 # 固定报告
-python3 '~/AI_invest/投研系统/工具脚本/技术/缠论/缠论报告_v5.py' --count 260
+python3 './缠论报告_v5.py' --count 260
 
 # 寒武纪 v5t 单股报告
-python3 '~/AI_invest/投研系统/工具脚本/技术/缠论/export_v5t_single_stock_report_html.py' --code 688256.SH --name '寒武纪-U'
+python3 './export_v5t_single_stock_report_html.py' --code 688256.SH --name '寒武纪-U'
 ```
 
 ## 历史目录

@@ -11,7 +11,7 @@
 ## 现有代码位置
 
 ```
-~/AI_invest/投研系统/工具脚本/技术/
+../
 ├── chan_core_v5t.py          # 核心引擎（1521行，单类 ChanCoreV5T）
 ├── 缠论/
 │   ├── 缠论分析_v5.py         # 多周期分析入口
@@ -74,7 +74,7 @@
 ### 模块结构（新建文件，不改 chan_core_v5t.py）
 
 ```
-~/AI_invest/投研系统/工具脚本/技术/缠论/
+./
 ├── strategy_funnel_30min.py    # 三层漏斗主逻辑
 ├── macd_divergence.py          # MACD背驰计算模块（P0）
 ├── sector_mapper.py            # 板块→成分股映射
